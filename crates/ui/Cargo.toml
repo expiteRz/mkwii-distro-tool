@@ -1,0 +1,9 @@
+[package]
+name = "mkwii-distro-tool-ui"
+version = "0.1.0"
+publish.workspace = true
+edition.workspace = true
+
+[dependencies]
+iced.workspace = true
+once_cell.workspace = true

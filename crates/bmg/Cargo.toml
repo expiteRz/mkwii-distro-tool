@@ -1,0 +1,14 @@
+[package]
+name = "mkwii-distro-tool-bmg"
+version = "0.1.0"
+publish.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+binrw.workspace = true
+log.workspace = true
+mkwii-distro-tool-logger.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+strum = { version = "0.28", features = ["derive"] }

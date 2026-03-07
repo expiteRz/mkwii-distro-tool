@@ -1,0 +1,35 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/bmg",
+    "crates/config",
+    "crates/logger",
+    "crates/mkwii-distro-tool",
+    "crates/ui",
+]
+
+default-members = ["crates/mkwii-distro-tool"]
+
+[workspace.package]
+publish = false
+edition = "2024"
+
+[workspace.dependencies]
+anyhow = "1"
+binrw = "0.15"
+bytemuck = "1.25.0"
+byteorder = "1.5.0"
+env_logger = "0.11.9"
+iced = { version = "0.14.0", default-features = false, features = [
+    "tokio",
+    "wgpu",
+] }
+log = "0.4.29"
+mkwii-distro-tool-logger.path = "./crates/logger"
+mkwii-distro-tool-config.path = "./crates/config"
+mkwii-distro-tool-ui.path = "./crates/ui"
+num-traits = "0.2.19"
+once_cell = "1.21.3"
+rfd = "0.17"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

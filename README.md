@@ -10,7 +10,7 @@
   - [x] Game settings
   - [x] Cup/Track definitions
   - [ ] BMG
-    - [x] Deserialization (BMG -> Structure)
+    - [ ] Deserialization (BMG -> Structure)
     - [ ] Serialization
       - [ ] Into JSON
         - [ ] Improve visibility for 0x1A Escape Sequence

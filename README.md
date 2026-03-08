@@ -13,6 +13,7 @@
     - [x] Deserialization (BMG -> Structure)
     - [ ] Serialization
       - [ ] Into JSON
+        - [ ] Improve visibility for 0x1A Escape Sequence
       - [ ] Into BMG back
   - [ ] Track filenames for editor
 - [ ] UI

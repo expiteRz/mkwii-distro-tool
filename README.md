@@ -30,7 +30,11 @@
 
 ## Supported engine versions (Planned)
 
-- [ ] v2.0.1 (build from latest commit)
+- [ ] v2.0.1 (build from [latest commit](https://github.com/MelgMKW/Pulsar/tree/820ad929c3c7141a0396692d8b0896d1546240fd))
+
+## Prerequisite
+
+- Requires Rust v1.92 or later
 
 ## Credits
 

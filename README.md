@@ -4,7 +4,7 @@
 
 > mkwii-distro-tool is a tentitive name, and it will be changed in the future.
 
-## Roadmap
+## Initial roadmap
 
 - [ ] Deserialize config file
   - [x] Game settings

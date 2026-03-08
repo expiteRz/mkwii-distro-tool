@@ -1,7 +1,6 @@
-use std::{fs, io::{Read, Seek, Write}, path::Path};
+use std::{fmt::Debug, fs, io::{Read, Seek, Write}, path::Path};
 
 use binrw::{BinRead, BinWrite, binrw};
-use derive_debug::Dbg;
 use iced::{Element, Task, widget::column};
 use mkwii_distro_tool_ui::{self as ui, View as _};
 
@@ -85,14 +84,19 @@ pub struct SectionHeader {
     size: u32,
 }
 
-#[derive(Dbg, Clone, Default)]
+#[derive(Clone, Default)]
 #[binrw]
 #[brw(magic = b"MESGbmg1", big)]
 pub struct TextHolder {
     size: u32,
-    #[dbg(placeholder = "...")]
     #[br(count = size - 12)]
     bytes: Vec<u8>,
+}
+
+impl Debug for TextHolder {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("TextHolder").field("size", &self.size).field("bytes", &"...").finish()
+    }
 }
 
 impl TextHolder {

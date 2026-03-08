@@ -1,5 +1,6 @@
+use std::fmt::Debug;
+
 use binrw::binrw;
-use derive_debug::Dbg;
 use iced::{Task, widget::{Column, TextInput, column, text_input}};
 
 use crate::{SectionHeader, slots::CourseId, ui};
@@ -17,7 +18,7 @@ pub enum Message {
     MusicSlotChange(usize, usize),
 }
 
-#[derive(Dbg, Clone, Default)]
+#[derive(Clone, Default)]
 #[binrw]
 #[br(assert(header.version == Self::VERSION, "cup section: invalid version => must be {}", Self::VERSION))]
 #[brw(magic = b"CUPS", big)]
@@ -35,8 +36,23 @@ pub struct CupHolder {
     #[br(if(padding == 0))]
     #[br(count = cup_amount * 4)]
     #[bw(if(*padding > 0))]
-    #[dbg(placeholder = "...")]
     track_alphabeticals: Vec<u16>,
+}
+
+impl Debug for CupHolder {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("CupHolder")
+            .field("header", &self.header)
+            .field("cup_amount", &self.cup_amount)
+            .field("regular_mode", &self.regular_mode)
+            .field("padding", &self.padding)
+            .field("trophy_count", &self.trophy_count)
+            .field("total_variants", &self.total_variants)
+            .field("tracks", &self.tracks)
+            .field("variants", &self.variants)
+            .field("track_alphabeticals", &"...")
+            .finish()
+    }
 }
 
 #[derive(Debug, Clone, Default)]

@@ -1,12 +1,13 @@
+use std::fmt::Debug;
+
 use binrw::binrw;
-use derive_debug::Dbg;
 
 use crate::SectionHeader;
 
 #[derive(Debug, Clone)]
 pub enum Message {}
 
-#[derive(Dbg, Clone)]
+#[derive(Clone)]
 #[binrw]
 #[br(assert(header.version == Self::VERSION, "info section: invalid version => must be {}", Self::VERSION))]
 #[brw(magic = b"INFO", big)]
@@ -33,8 +34,26 @@ pub struct InfoHolder {
     pub allow_mega_cloud: bool,
     pub cup_amount: u16,
     pub online_vote_timer: u8,
-    #[dbg(skip)]
     padding: [u8; 40],
+}
+
+impl Debug for InfoHolder {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("InfoHolder")
+            .field("header", &self.header)
+            .field("room_key", &self.room_key)
+            .field("probabilities", &self.probabilities)
+            .field("region", &self.region)
+            .field("repick_prevention", &self.repick_prevention)
+            .field("allow_trophies", &self.allow_trophies)
+            .field("allow_200cc", &self.allow_200cc)
+            .field("allow_umt", &self.allow_umt)
+            .field("allow_feather", &self.allow_feather)
+            .field("allow_mega_cloud", &self.allow_mega_cloud)
+            .field("cup_amount", &self.cup_amount)
+            .field("online_vote_timer", &self.online_vote_timer)
+            .finish()
+    }
 }
 
 impl InfoHolder {

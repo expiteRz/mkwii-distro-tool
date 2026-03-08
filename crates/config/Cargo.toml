@@ -9,7 +9,6 @@ anyhow.workspace = true
 binrw.workspace = true
 bytemuck.workspace = true
 byteorder.workspace = true
-derive-debug = "0.1.2"
 iced.workspace = true
 log.workspace = true
 mkwii-distro-tool-ui.workspace = true

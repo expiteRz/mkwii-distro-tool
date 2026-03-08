@@ -1,0 +1,8 @@
+[package]
+name = "mkwii-distro-tool-logger"
+version = "0.1.0"
+publish.workspace = true
+edition.workspace = true
+
+[dependencies]
+env_logger.workspace = true

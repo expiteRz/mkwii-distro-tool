@@ -1,0 +1,15 @@
+[package]
+name = "mkwii-distro-tool"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+env_logger.workspace = true
+iced.workspace = true
+log.workspace = true
+mkwii-distro-tool-logger.workspace = true
+mkwii-distro-tool-config.workspace = true
+mkwii-distro-tool-ui.workspace = true
+rfd.workspace = true

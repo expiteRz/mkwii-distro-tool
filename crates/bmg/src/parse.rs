@@ -5,7 +5,7 @@ use std::{fmt::Debug, fs, path::Path};
 use binrw::{BinRead as _, binrw, helpers::until_eof};
 use serde::{Deserialize, Serialize};
 
-use crate::{MessageGroup, MessageItem, get_text_until_null, traits::ExistSubstringExt};
+use crate::{MessageGroup, MessageItem, get_text_until_null, traits::{AdjustLengthExt, ExistSubstringExt}};
 
 #[derive(Debug, Default, Clone)]
 #[binrw]
@@ -82,7 +82,7 @@ impl From<MessageGroup> for BMG {
         }
 
         // Text pool preparation
-        text_pool.resize(text_pool.len() + (8 - (text_pool.len() % 8)), 0x0u16);
+        text_pool.resize(text_pool.adjust_length(), 0x0u16);
         let pool_holder_size = StringHolder::HEADER_SIZE + (text_pool.len() * 2) as u32;
         let mut pool_holder = StringHolder::default();
         {
@@ -296,6 +296,13 @@ impl Debug for MessageIdHolder {
             .field("padding", &self.padding)
             .field("ids", &ids)
             .finish()
+    }
+}
+
+impl AdjustLengthExt for Vec<u16> {
+    fn adjust_length(&self) -> usize {
+        let current_len = self.len();
+        if (current_len % 8) > 0 { current_len + (4 - current_len % 4) } else { current_len }
     }
 }
 

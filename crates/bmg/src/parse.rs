@@ -7,6 +7,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::{MessageGroup, MessageItem, get_text_until_null, traits::{AdjustLengthExt, ExistSubstringExt}};
 
+const SIZE_ALIGNMENT: u32 = 0x20;
+
 #[derive(Debug, Default, Clone)]
 #[binrw]
 #[brw(magic = b"MESGbmg1")]
@@ -72,10 +74,10 @@ impl From<MessageGroup> for BMG {
 
         // Entry holder preparation
         let message_len = entries.len() as u16;
-        entries.resize(entries.len() + (entries.len() % 2), TextEntry::new_by_zero());
+        // entries.resize(entries.len() + (entries.len() % 2), TextEntry::new_by_zero());
         let mut entry_holder_size = EntryHolder::HEADER_SIZE + (entries.len() * 8) as u32;
-        if entry_holder_size % 32 != 0 {
-            entry_holder_size = (32 - (entry_holder_size % 32)) + entry_holder_size;
+        if entry_holder_size % SIZE_ALIGNMENT != 0 {
+            entry_holder_size = (SIZE_ALIGNMENT - (entry_holder_size % SIZE_ALIGNMENT)) + entry_holder_size;
         }
         let mut entry_holder = EntryHolder::default();
         {
@@ -85,10 +87,10 @@ impl From<MessageGroup> for BMG {
         }
 
         // Text pool preparation
-        text_pool.resize(text_pool.adjust_length(), 0x0u16);
+        // text_pool.resize(text_pool.adjust_length(), 0x0u16);
         let mut pool_holder_size = StringHolder::HEADER_SIZE + (text_pool.len() * 2) as u32;
-        if pool_holder_size % 32 != 0 {
-            pool_holder_size = (32 - (pool_holder_size % 32)) + pool_holder_size;
+        if pool_holder_size % SIZE_ALIGNMENT != 0 {
+            pool_holder_size = (SIZE_ALIGNMENT - (pool_holder_size % SIZE_ALIGNMENT)) + pool_holder_size;
         }
         let mut pool_holder = StringHolder::default();
         {
@@ -98,8 +100,11 @@ impl From<MessageGroup> for BMG {
 
         // Message ID holder preparation
         let entry_len = ids.len() as u16;
-        ids.resize(ids.len() + (4 - (ids.len() % 4)), 0x0u32);
-        let ids_holder_size = MessageIdHolder::HEADER_SIZE + (ids.len() * 4) as u32;
+        // ids.resize(ids.len() + (4 - (ids.len() % 4)), 0x0u32);
+        let mut ids_holder_size = MessageIdHolder::HEADER_SIZE + (ids.len() * 4) as u32;
+        if ids_holder_size & SIZE_ALIGNMENT != 0 {
+            ids_holder_size = (SIZE_ALIGNMENT - (ids_holder_size % 32)) + ids_holder_size;
+        }
         let mut ids_holder = MessageIdHolder::default();
         {
             ids_holder.size = ids_holder_size;
@@ -169,7 +174,7 @@ pub struct EntryHolder {
     padding: u8,
     #[br(count = message_len/* + (message_len % 4) */)]
     pub entries: Vec<TextEntry>,
-    #[brw(align_after = 0x20)]
+    #[brw(align_after = SIZE_ALIGNMENT)]
     #[bw(ignore)]
     _padding: (),
 }
@@ -249,7 +254,7 @@ pub struct StringHolder {
     size: u32,
     #[br(count = (size - 8) / 2)]
     pub data: Vec<u16>,
-    #[brw(align_after = 0x20)]
+    #[brw(align_after = SIZE_ALIGNMENT)]
     #[bw(ignore)]
     _padding: (),
 }
@@ -279,7 +284,7 @@ pub struct MessageIdHolder {
     // #[br(count = entry_len + (entry_len % 4))]
     #[br(parse_with = until_eof)]
     pub ids: Vec<u32>,
-    #[brw(align_after = 0x10)]
+    #[brw(align_after = SIZE_ALIGNMENT)]
     _padding: (),
 }
 

@@ -73,7 +73,10 @@ impl From<MessageGroup> for BMG {
         // Entry holder preparation
         let message_len = entries.len() as u16;
         entries.resize(entries.len() + (entries.len() % 2), TextEntry::new_by_zero());
-        let entry_holder_size = EntryHolder::HEADER_SIZE + (entries.len() * 8) as u32;
+        let mut entry_holder_size = EntryHolder::HEADER_SIZE + (entries.len() * 8) as u32;
+        if entry_holder_size % 32 != 0 {
+            entry_holder_size = (32 - (entry_holder_size % 32)) + entry_holder_size;
+        }
         let mut entry_holder = EntryHolder::default();
         {
             entry_holder.size = entry_holder_size;
@@ -83,7 +86,10 @@ impl From<MessageGroup> for BMG {
 
         // Text pool preparation
         text_pool.resize(text_pool.adjust_length(), 0x0u16);
-        let pool_holder_size = StringHolder::HEADER_SIZE + (text_pool.len() * 2) as u32;
+        let mut pool_holder_size = StringHolder::HEADER_SIZE + (text_pool.len() * 2) as u32;
+        if pool_holder_size % 32 != 0 {
+            pool_holder_size = (32 - (pool_holder_size % 32)) + pool_holder_size;
+        }
         let mut pool_holder = StringHolder::default();
         {
             pool_holder.size = pool_holder_size;

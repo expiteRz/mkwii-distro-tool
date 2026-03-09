@@ -161,8 +161,11 @@ pub struct EntryHolder {
     group_id: u16,
     default_color: u8,
     padding: u8,
-    #[br(count = message_len + (message_len % 4))]
+    #[br(count = message_len/* + (message_len % 4) */)]
     pub entries: Vec<TextEntry>,
+    #[brw(align_after = 0x20)]
+    #[bw(ignore)]
+    _padding: (),
 }
 
 impl EntryHolder {
@@ -179,6 +182,7 @@ impl Default for EntryHolder {
             default_color: Default::default(),
             padding: Default::default(),
             entries: vec![],
+            _padding: (),
         }
     }
 }
@@ -239,6 +243,9 @@ pub struct StringHolder {
     size: u32,
     #[br(count = (size - 8) / 2)]
     pub data: Vec<u16>,
+    #[brw(align_after = 0x20)]
+    #[bw(ignore)]
+    _padding: (),
 }
 
 impl StringHolder {
@@ -266,6 +273,8 @@ pub struct MessageIdHolder {
     // #[br(count = entry_len + (entry_len % 4))]
     #[br(parse_with = until_eof)]
     pub ids: Vec<u32>,
+    #[brw(align_after = 0x10)]
+    _padding: (),
 }
 
 impl Default for MessageIdHolder {
@@ -277,6 +286,7 @@ impl Default for MessageIdHolder {
             info: Default::default(),
             padding: Default::default(),
             ids: Default::default(),
+            _padding: (),
         }
     }
 }

@@ -150,4 +150,43 @@ mod tests {
 
         Ok(())
     }
+
+    #[test]
+    fn test_read_and_write_multiple() -> anyhow::Result<()> {
+        let mut dir = fs::read_dir("./test")?;
+        while let Some(Ok(entry)) = dir.next() {
+            if let Ok(meta) = entry.metadata()
+                && meta.is_file()
+            {
+                println!("start to check");
+                let path = entry.path();
+                println!("{path:?}");
+                if let Some(ex) = path.extension()
+                    && ex == "bmg"
+                {
+                    println!("detected bmg file");
+                    let bmg = BMG::read_from_path(path.clone())?;
+                    let msg = MessageGroup::read_from_bmg(bmg)?;
+                    let bmg_re_encode = BMG::from(msg);
+
+                    let Some(parent) = path.parent() else {
+                        continue;
+                    };
+                    let Some(filename) = path.file_name() else {
+                        continue;
+                    };
+                    let mut dest_path = parent.join("dest");
+                    if !dest_path.exists() {
+                        fs::create_dir_all(dest_path.clone())?;
+                    }
+                    dest_path = dest_path.join(filename);
+                    let mut bmg_dest = fs::File::create(dest_path)?;
+                    bmg_re_encode.write_be(&mut bmg_dest)?;
+                    bmg_dest.flush()?;
+                }
+            }
+        }
+
+        Ok(())
+    }
 }

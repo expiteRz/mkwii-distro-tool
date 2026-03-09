@@ -13,4 +13,4 @@ iced.workspace = true
 log.workspace = true
 mkwii-distro-tool-ui.workspace = true
 num-traits.workspace = true
-serde = { version = "1.0.228", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }

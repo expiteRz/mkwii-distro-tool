@@ -1,12 +1,8 @@
 use std::io::{Read, Seek};
 
 use anyhow::anyhow;
-use iced::Task;
-use iced::widget::column;
-use iced::widget::text_input;
 
 use crate::traits::{ParseExt, ReadArrayExt as _};
-use crate::ui;
 
 // #[repr(C)]
 #[derive(Debug, Clone)]
@@ -66,23 +62,5 @@ impl Default for BinaryHeader {
             offsets: [Self::INFO_HOLDER_OFFSET, Self::CUP_HOLDER_OFFSET, 0],
             dir_name: Default::default(),
         }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub enum Message {
-    PackNameChange(String),
-}
-
-impl ui::View<Message> for BinaryHeader {
-    fn view(&self) -> iced::Element<'_, Message> {
-        column![text_input("test", &self.dir_name).on_input(Message::PackNameChange)].into()
-    }
-
-    fn update(&mut self, message: Message) -> Task<Message> {
-        match message {
-            Message::PackNameChange(name) => self.dir_name = name,
-        }
-        Task::none()
     }
 }

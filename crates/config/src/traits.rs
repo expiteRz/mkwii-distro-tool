@@ -27,3 +27,7 @@ pub trait ParseExt {
     where
         Self: Sized;
 }
+
+pub trait UiUpdateExt<Message> {
+    fn update(&mut self, message: Message);
+}

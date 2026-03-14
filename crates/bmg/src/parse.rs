@@ -11,7 +11,7 @@ const SIZE_ALIGNMENT: u32 = 0x20;
 
 #[derive(Debug, Default, Clone)]
 #[binrw]
-#[brw(magic = b"MESGbmg1")]
+#[brw(magic = b"MESGbmg1", big)]
 pub struct BMG {
     header: BMGHeader,
     pub entry_holder: EntryHolder,
@@ -285,6 +285,7 @@ pub struct MessageIdHolder {
     #[br(parse_with = until_eof)]
     pub ids: Vec<u32>,
     #[brw(align_after = SIZE_ALIGNMENT)]
+    #[bw(ignore)]
     _padding: (),
 }
 

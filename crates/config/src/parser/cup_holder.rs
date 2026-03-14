@@ -1,22 +1,8 @@
 use std::fmt::Debug;
 
 use binrw::binrw;
-use iced::{Task, widget::{Column, TextInput, column, text_input}};
 
-use crate::{SectionHeader, slots::CourseId, ui};
-
-const DEFAULT_CUP_BMG_START_ID: u32 = 0x10000;
-const DEFAULT_TRACK_BMG_START_ID: u32 = 0x20000;
-const DEFAULT_AUTHOR_BMG_START_ID: u32 = 0x30000;
-
-#[derive(Debug, Clone)]
-pub enum Message {
-    FilepathChange(usize, String),
-    NameChange(usize, String),
-    AuthorChange(usize, String),
-    TrackSlotChange(usize, usize),
-    MusicSlotChange(usize, usize),
-}
+use crate::{parser::SectionHeader, slots::{CourseId, MusicId}};
 
 #[derive(Clone, Default)]
 #[binrw]
@@ -30,9 +16,9 @@ pub struct CupHolder {
     pub trophy_count: [u16; 4],
     pub total_variants: u32,
     #[br(count = usize::from(cup_amount * 4))]
-    pub tracks: Vec<Track>,
+    pub tracks: Vec<RawTrack>,
     #[br(count = total_variants)]
-    pub variants: Vec<Variant>,
+    pub variants: Vec<RawVariant>,
     #[br(if(padding == 0))]
     #[br(count = cup_amount * 4)]
     #[bw(if(*padding > 0))]
@@ -68,9 +54,9 @@ pub enum RegularTrackSeletion {
 #[derive(Debug, Clone, Default)]
 #[binrw]
 #[brw(big)]
-pub struct Track {
+pub struct RawTrack {
     pub slot: CourseId,
-    pub music: CourseId,
+    pub music: MusicId,
     pub variant_count: u16,
     crc32: u32,
 }
@@ -78,9 +64,9 @@ pub struct Track {
 #[derive(Debug, Clone, Default)]
 #[binrw]
 #[brw(big)]
-pub struct Variant {
+pub struct RawVariant {
     pub slot: CourseId,
-    pub music: CourseId,
+    pub music: MusicId,
 }
 
 impl CupHolder {
@@ -98,29 +84,5 @@ impl CupHolder {
         let alphabeticals_len = (self.track_alphabeticals.len() as u32) * Self::SIZE_PER_TRACK_ALPHABETICAL_SORT; // needed?
 
         Self::SIZE_PRESERVED + track_len + variant_len + alphabeticals_len
-    }
-}
-
-impl ui::View<Message> for CupHolder {
-    fn view(&self) -> iced::Element<'_, Message> {
-        let mut track_crc32_vec: Vec<iced::Element<'_, Message>> = vec![];
-        for i in 0..self.tracks.len() {
-            track_crc32_vec.push(
-                text_input("Track name", format!("{:X}", self.tracks[i].crc32).as_str())
-                    .on_input(move |v| Message::NameChange(i, v))
-                    .into(),
-            );
-        }
-        Column::with_children(track_crc32_vec).into()
-    }
-
-    fn update(&mut self, message: Message) -> iced::Task<Message> {
-        match message {
-            Message::NameChange(i, v) => {
-                log::debug!("test: {}", self.tracks[i].crc32);
-            }
-            _ => {}
-        };
-        Task::none()
     }
 }

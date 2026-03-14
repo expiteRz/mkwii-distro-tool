@@ -2,10 +2,7 @@ use std::fmt::Debug;
 
 use binrw::binrw;
 
-use crate::SectionHeader;
-
-#[derive(Debug, Clone)]
-pub enum Message {}
+use crate::parser::SectionHeader;
 
 #[derive(Clone)]
 #[binrw]
